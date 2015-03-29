@@ -7,11 +7,9 @@
 
 (defn handler
   [mlq-dir req]
-  (let [latest-mlq (mlshoot/latest-mlq-path mlq-dir)]
-    {:status  200
-     :headers {"Content-Type" "application/json"}
-     :body    (json/write-str (mlq/current-series latest-mlq))})
-  )
+  {:status  200
+   :headers {"Content-Type" "application/json"}
+   :body    (json/write-str (mlq/shots (mlshoot/latest-mlq-path mlq-dir)))})
 
 (defn -main
   [& args]

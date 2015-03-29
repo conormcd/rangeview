@@ -72,10 +72,3 @@
             (shot-series
               (shot-convert row)))))
       (query (db mlq) "SELECT PRINTF(\"%d\", x) AS x, PRINTF(\"%d\", y) AS y, series, id FROM Shots"))))
-
-(defn current-series
-  "Get the current series of ten shots from an MLQ"
-  [mlq]
-  (let [all (shots mlq)
-        n (mod (count all) 10)]
-    (take-last (if (> n 0) n 10) all)))
