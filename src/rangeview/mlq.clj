@@ -51,7 +51,7 @@
         ring-size (:ring-size target)
         inner-ten (:inner-ten target)]
     (assoc shot
-           :score (- 11 (* 0.1 (Math/ceil (/ error (* ring-size 0.1)))))
+           :score (max 0.0 (min 10.9 (- 11 (* 0.1 (Math/ceil (/ error (* ring-size 0.1)))))))
            :inner (< error inner-ten))))
 
 (defn shot-series
