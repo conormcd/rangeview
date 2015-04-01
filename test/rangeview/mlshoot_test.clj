@@ -12,4 +12,5 @@
 
 (deftest latest-mlq-path-returns-expected-value
   (testing "We know which test MLQ is 'latest'; ensure it's returned"
+    (.setLastModified (clojure.java.io/file latest-mlq-file) (System/currentTimeMillis))
     (is (= (latest-mlq-path test-mlq-dir) latest-mlq-file))))
