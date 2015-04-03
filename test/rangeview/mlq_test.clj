@@ -56,20 +56,16 @@
 
 (deftest shot-ids-are-a-contiguous-series
   (testing "Shot IDs are a contiguous series"
-    (is (let [shot-ids (map #(:id %) (shots sample-mlq))]
+    (is (let [shot-ids (map :id (shots sample-mlq))]
           (= shot-ids (range 1 (+ 1 (reduce max shot-ids))))))))
 
 (deftest no-sighters-after-match-shots
   (testing "There are no sighting shots after match shots"
-    (is
-      (let [shot-types (map #(:sighter %) (shots sample-mlq))
-            first-match-shot (first (first (filter #(= false (second %)) (map vector (range) shot-types))))
-            last-sighter-shot (first (last (filter #(= true (second %)) (map vector (range) shot-types))))]
-        (< last-sighter-shot first-match-shot)))))
+    (is (= [true false] (map first (partition-by identity (map :sighter (shots sample-mlq))))))))
 
 (deftest no-inner-tens-less-than-10-3
   (testing "All inner tens are at least 10.3"
-    (is (>= 10.3 (reduce min (map #(:score %) (filter #(:inner %) (shots "test/data/Card061.mlq"))))))))
+    (is (>= 10.3 (reduce min (map :score (filter :inner (shots "test/data/Card061.mlq"))))))))
 
 ;
 ; Integrity checks for the test MLQs. These repeat some of the tests above but
