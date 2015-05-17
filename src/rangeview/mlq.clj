@@ -72,3 +72,17 @@
             (shot-series
               (shot-convert row)))))
       (query (db mlq) "SELECT PRINTF(\"%d\", x) AS x, PRINTF(\"%d\", y) AS y, series, id FROM Shots"))))
+
+(defn discipline
+  "Figure out which type of target was used in the MLQ"
+  [mlq]
+  (case (Integer/parseInt (param mlq "TargetID"))
+    4 :fr60pr
+    21 :ar60))
+
+(defn target-state
+  "Get the current state of a target as seen in an MLQ"
+  [mlq]
+  {:name (param mlq "CardName")
+   :discipline (discipline mlq)
+   :shots (shots mlq)})

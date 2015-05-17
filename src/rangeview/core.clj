@@ -8,8 +8,9 @@
 (defn handler
   [mlq-dir req]
   {:status  200
-   :headers {"Content-Type" "application/json"}
-   :body    (json/write-str (mlq/shots (mlshoot/latest-mlq-path mlq-dir)))})
+   :headers {"Access-Control-Allow-Origin" "*"
+             "Content-Type" "application/json"}
+   :body    (json/write-str (mlq/target-state (mlshoot/latest-mlq-path mlq-dir)))})
 
 (defn -main
   [& args]
