@@ -15,9 +15,8 @@
 
 (defn circle
   "Draw a circle."
-  [target-canvas-id scale x y diameter stroke-colour fill-colour]
-  (let [target-canvas (canvas-context target-canvas-id)
-        height (.-height (:canvas target-canvas))
+  [target-canvas scale x y diameter stroke-colour fill-colour]
+  (let [height (.-height (:canvas target-canvas))
         width (.-width (:canvas target-canvas))
         x2 (+ (* x scale) (/ width 2))
         y2 (+ (* y scale) (/ height 2))
@@ -38,29 +37,48 @@
 
 (defn target
   "Draw a target."
-  [target-canvas-id scale rings]
+  [target-canvas scale rings]
   (doseq [ring (sort-by first > rings)]
     (let [size (first ring)
           stroke (second ring)
           fill (nth ring 2)]
-      (circle target-canvas-id scale 0 0 size stroke fill))))
+      (circle target-canvas scale 0 0 size stroke fill))))
 
 (defn shot
   "Draw a single shot on a target"
-  [target-canvas-id scale shot calibre colour]
-  (circle target-canvas-id scale (:x shot) (:y shot) calibre :black colour))
+  [target-canvas scale shot calibre colour]
+  (circle target-canvas scale (:x shot) (:y shot) calibre :black colour))
 
 (defn shots
   "Draw some shots."
-  [target-canvas-id scale shots calibre]
+  [target-canvas scale shots calibre]
   (do
     (doseq [s (butlast shots)]
-      (shot target-canvas-id scale s calibre :green))
-    (shot target-canvas-id scale (last shots) calibre :red)))
+      (shot target-canvas scale s calibre :green))
+    (shot target-canvas scale (last shots) calibre :red)))
+
+(defn pixels-per-mm
+  "How many pixels should we use per mm of real target?
+
+   We need to control the zoom such that all shots are visible, but as little
+   target as possible is shown."
+  [target-canvas rings calibre shots]
+  (let [cal (/ calibre 2)
+        h-shot (->> shots (map :x) (map Math/abs) (apply max) (* 2) (+ cal))
+        v-shot (->> shots (map :y) (map Math/abs) (apply max) (* 2) (+ cal))
+        h-ring (->> rings (map first) (filter #(> % h-shot)) (first))
+        v-ring (->> rings (map first) (filter #(> % v-shot)) (first))
+        height (.-height (:canvas target-canvas))
+        width (.-width (:canvas target-canvas))]
+    (if (> h-ring v-ring)
+      (/ width h-ring)
+      (/ height v-ring))))
 
 (defn repaint
   "Repaint the target and shots."
-  [target-id scale rings calibre shot-data]
-  (let [target-canvas-id (str "target" target-id "-canvas")]
-    (target target-canvas-id scale rings)
-    (shots target-canvas-id scale shot-data calibre)))
+  [target-id rings calibre shot-data]
+  (let [target-canvas-id (str "target" target-id "-canvas")
+        target-canvas (canvas-context target-canvas-id)
+        scale (pixels-per-mm target-canvas rings calibre shot-data)]
+    (target target-canvas scale rings)
+    (shots target-canvas scale shot-data calibre)))

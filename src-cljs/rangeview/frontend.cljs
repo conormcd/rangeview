@@ -22,7 +22,6 @@
     (html/update-match-score target-id (shots/shots->str shots))
     (draw/repaint
       target-id
-      5 ; TODO: Calculate this correctly.
       (target/rings discipline)
       (target/calibre discipline)
       series)))
