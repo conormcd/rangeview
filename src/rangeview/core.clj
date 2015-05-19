@@ -15,6 +15,6 @@
 (defn -main
   [& args]
   (let [mlq-dir (first args)
-        port (first (filter #(not (nil? %)) [(second args), 8080]))]
+        port (or (some-> args second Integer/parseInt) 8080)]
     (when (nil? mlq-dir) (println "Usage: rangeview dir [port]") (System/exit 1))
     (jetty/run-jetty (partial handler mlq-dir) {:port port})))
