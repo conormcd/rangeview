@@ -14,12 +14,15 @@
 (defn refresh
   "Re-draw the target and all the score details"
   [target-id ajax-payload]
-  (let [discipline (keyword (:discipline ajax-payload))
+  (let [card-name (or (:name ajax-payload))
+        discipline (keyword (:discipline ajax-payload))
         shots (:shots ajax-payload)
         series (shots/last-series shots)]
+    (html/update-name target-id (if (str/blank? card-name) "&nbsp;" card-name))
     (html/update-scores target-id (map shots/shot->str series))
     (html/update-series-score target-id (shots/shots->str series))
     (html/update-match-score target-id (shots/shots->str shots))
+    (html/update-canvas-height target-id)
     (draw/repaint
       target-id
       (target/rings discipline)
@@ -46,8 +49,10 @@
   []
   (-> js/window .-location .-hash (subs 1) (str/split #",")))
 
-(doseq [source (map-indexed vector (target-addresses))]
-  (let [id (first source)
-        url (str "http://" (second source) "/")]
-    (html/append-contents "targets" (html/target id))
-    (poll id url 5)))
+(let [num-targets (count (target-addresses))
+      target-width (/ (.-innerWidth js/window) num-targets)]
+  (doseq [source (map-indexed vector (target-addresses))]
+    (let [id (first source)
+          url (str "http://" (second source) "/")]
+      (html/append-contents "targets" (html/target id target-width))
+      (poll id url 5))))

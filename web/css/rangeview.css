@@ -5,12 +5,17 @@ html, body, div, canvas, table, tr, td {
 	padding: 0;
 }
 
+.target {
+	float: left;
+}
+
 .target .name {
-	font-size: 20px;
+	font-size: 30px;
 	text-align: center;
 }
 
-.target .scores .shot {
+.target .infobox td {
+	width: 33%;
 	font-size: 20px;
 	text-align: center;
 }

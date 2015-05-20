@@ -11,7 +11,7 @@
 (defn canvas-context
   "Get a canvas context from a particular canvas element."
   [id]
-  (canvas/init (html/element id) "2d"))
+  (canvas/monet-canvas (html/element id) "2d"))
 
 (defn circle
   "Draw a circle."

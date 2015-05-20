@@ -22,12 +22,12 @@
 
 (defn target
   "The HTML for a single target's display."
-  [id]
+  [id width]
   (str
-    "<div class=\"target\" id=\"target" id "\">"
-      "<div id=\"target" id "-name\"></div>"
-      "<canvas id=\"target" id "-canvas\"></canvas>"
-      "<table>"
+    "<div class=\"target\" id=\"target" id "\" width=\"" width "\">"
+      "<div id=\"target" id "-name\" class=\"name\"></div>"
+      "<canvas id=\"target" id "-canvas\" width=\"" width "\"></canvas>"
+      "<table id=\"target" id "-infobox\" class=\"infobox\" width=\"" width "\">"
       (clojure.string/join 
         ""
         (for [shot (range 5)]
@@ -35,23 +35,37 @@
             "<tr>"
               "<td id=\"target" id "-shot" shot "\"></td>"
               "<td id=\"target" id "-shot" (+ shot 5) "\"></td>"
+              (case shot
+                0 "<td>Series</td>"
+                1 (str "<td id=\"target" id "-series-total\"></td>")
+                2 ""
+                3 "<td>Match</td>"
+                4 (str "<td id=\"target" id "-match-total\"></td>"))
             "</tr>"
             )))
-      "<tr>"
-        "<td>Series:</td>"
-        (str "<td id=\"target" id "-series-total\"></td>")
-      "</tr>"
-      "<tr>"
-        "<td>Match:</td>"
-        (str "<td id=\"target" id "-match-total\"></td>")
-      "</tr>"
       "</table>"
     "</div>"))
+
+(defn update-name
+  "Update the name of the card."
+  [target-id card-name]
+  (set-contents (str "target" target-id "-name") card-name))
+
+(defn update-canvas-height
+  "Reset the canvas height to window.innerHeight minus the name & infobox"
+  [id]
+  (let [total-height (.-innerHeight js/window)
+        name-height (.-offsetHeight (element (str "target" id "-name")))
+        info-height (.-offsetHeight (element (str "target" id "-infobox")))
+        canvas-height (- total-height (+ 5 name-height info-height))]
+    (set! (.-height (element (str "target" id "-canvas"))) canvas-height)))
 
 (defn update-scores
   "Update the individual shot scores for a target."
   [target-id scores]
-  (doseq [score (map-indexed vector scores)]
+  (doseq [score (concat
+                  (map #(seq [% ""]) (range 10))
+                  (map-indexed vector scores))]
     (set-contents (str "target" target-id "-shot" (first score)) (second score))))
 
 (defn update-series-score

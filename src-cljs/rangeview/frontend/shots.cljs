@@ -3,8 +3,10 @@
 (defn last-series
   "Given a sequence of shots, extract the last series of 10 shots."
   [shots]
-  (let [n (mod (count shots) 10)]
-    (take-last (if (> n 0) n 10) shots)))
+  (let [sighter? (:sighter (last shots))
+        series-shots (filter #(= (:sighter %) sighter?) shots)
+        n (mod (count series-shots) 10)]
+    (take-last (if (> n 0) n 10) series-shots)))
 
 (defn match-shots
   "Extract the match or record shots from a series of shots."
