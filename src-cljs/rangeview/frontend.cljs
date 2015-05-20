@@ -3,8 +3,8 @@
             [clojure.string :as str]
             [rangeview.frontend.draw :as draw]
             [rangeview.frontend.html :as html]
-            [rangeview.frontend.shots :as shots]
-            [rangeview.frontend.target :as target]))
+            [rangeview.shots :as shots]
+            [rangeview.target :as target]))
 
 (defn ajax-error
   "Log an AJAX error"

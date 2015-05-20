@@ -1,4 +1,4 @@
-(ns rangeview.frontend.target)
+(ns rangeview.target)
 
 ; The ISSF Rifle and Pistol events, their ISSF abbreviations and the keywords
 ; used for them in this software. Running target events are excluded since they

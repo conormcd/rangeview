@@ -1,4 +1,4 @@
-(ns rangeview.frontend.shots)
+(ns rangeview.shots)
 
 (defn last-series
   "Given a sequence of shots, extract the last series of 10 shots."
@@ -21,7 +21,8 @@
 (defn round-decimal
   "Round a decimal value to one decimal place."
   [value]
-  (.toFixed value 1))
+  #+clj (format "%.1f" value)
+  #+cljs (.toFixed value 1))
 
 (defn score
   "Take a series of shots and score them in both decimal and integer"
