@@ -11,8 +11,11 @@
                  [rm-hull/monet "0.2.1"]
                  [cljs-ajax "0.3.10"]]
   :plugins [[lein-cljsbuild "1.0.5"]]
+  :aliases {"repl" ["do" "cljx," "repl"]
+            "run" ["do" "cljx," ["cljsbuild" "once"] "run"]
+            "test" ["do" "cljx," "test"]}
   :cljx {:builds [{:source-paths ["src-cljx"]
-                   :output-path "target/classes"
+                   :output-path "target/generated/clj"
                    :rules :clj}
                   {:source-paths ["src-cljx"]
                    :output-path "target/generated/cljs"
@@ -21,6 +24,7 @@
                         :compiler {:output-to "web/js/rangeview.js"
                                    :optimizations :whitespace
                                    :pretty-print true}}]}
+  :source-paths ["src" "target/generated/clj"]
   :main ^:skip-aot rangeview.core
   :target-path "target/%s"
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.6.0"]]}
