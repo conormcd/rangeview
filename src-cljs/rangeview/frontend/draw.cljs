@@ -3,10 +3,11 @@
              [rangeview.frontend.html :as html]))
 
 (def colour
-  {:black "#000000"
-   :white "#FFFFFF"
-   :red   "#FF0000"
-   :green "#00FF00"})
+  {:black  "#000000"
+   :white  "#FFFFFF"
+   :red    "#FF0000"
+   :green  "#00FF00"
+   :yellow "#FFFF00"})
 
 (defn canvas-context
   "Get a canvas context from a particular canvas element."
@@ -35,6 +36,24 @@
       (canvas/fill)
       (canvas/stroke))))
 
+(defn sighter-triangle
+  "Draw a yellow triangle in the upper right corner of the canvas."
+  [target-canvas]
+  (let [height (.-height (:canvas target-canvas))
+        width (.-width (:canvas target-canvas))
+        smallest-dim (min height width)
+        triangle-size (/ smallest-dim 4)]
+    (->
+      (:ctx target-canvas)
+      (canvas/stroke-style (:yellow colour))
+      (canvas/fill-style (:yellow colour))
+      (canvas/begin-path)
+      (canvas/move-to (- width triangle-size) 0)
+      (canvas/line-to width 0)
+      (canvas/line-to width triangle-size)
+      (canvas/fill)
+      (canvas/stroke))))
+
 (defn target
   "Draw a target."
   [target-canvas scale rings]
@@ -53,6 +72,8 @@
   "Draw some shots."
   [target-canvas scale shots calibre]
   (do
+    (if (:sighter (last shots))
+      (sighter-triangle target-canvas))
     (doseq [s (butlast shots)]
       (shot target-canvas scale s calibre :green))
     (shot target-canvas scale (last shots) calibre :red)))
