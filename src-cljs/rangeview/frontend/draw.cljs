@@ -71,12 +71,14 @@
 (defn shots
   "Draw some shots."
   [target-canvas scale shots calibre]
-  (do
-    (if (:sighter (last shots))
-      (sighter-triangle target-canvas))
-    (doseq [s (butlast shots)]
-      (shot target-canvas scale s calibre :green))
-    (shot target-canvas scale (last shots) calibre :red)))
+  (if (> (count shots) 0)
+    (do
+      (if (:sighter (last shots))
+        (sighter-triangle target-canvas))
+      (doseq [s (butlast shots)]
+        (shot target-canvas scale s calibre :green))
+      (shot target-canvas scale (last shots) calibre :red))
+    (sighter-triangle target-canvas)))
 
 (defn pixels-per-mm
   "How many pixels should we use per mm of real target?
@@ -85,10 +87,12 @@
    target as possible is shown."
   [target-canvas rings calibre shots]
   (let [cal (/ calibre 2)
+        ring-sizes (sort (map first rings))
+        nine-ring (nth ring-sizes 2)
         h-shot (->> shots (map :x) (map Math/abs) (apply max) (* 2) (+ cal))
         v-shot (->> shots (map :y) (map Math/abs) (apply max) (* 2) (+ cal))
-        h-ring (->> rings (map first) (filter #(> % h-shot)) (first))
-        v-ring (->> rings (map first) (filter #(> % v-shot)) (first))
+        h-ring (max (->> ring-sizes (filter #(> % h-shot)) (first)) nine-ring)
+        v-ring (max (->> ring-sizes (filter #(> % v-shot)) (first)) nine-ring)
         height (.-height (:canvas target-canvas))
         width (.-width (:canvas target-canvas))]
     (if (> h-ring v-ring)
