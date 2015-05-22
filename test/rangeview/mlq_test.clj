@@ -61,11 +61,19 @@
 
 (deftest no-sighters-after-match-shots
   (testing "There are no sighting shots after match shots"
-    (is (= [true false] (map first (partition-by identity (map :sighter (shots sample-mlq))))))))
+    (is (= [true false]
+           (->> (shots sample-mlq)
+                (map :sighter)
+                (partition-by identity)
+                (map first))))))
 
 (deftest no-inner-tens-less-than-10-3
   (testing "All inner tens are at least 10.3"
-    (is (>= 10.3 (reduce min (map :score (filter :inner (shots "test/data/Card061.mlq"))))))))
+    (is (>= 10.3
+            (->> (shots sample-mlq)
+                 (filter :inner)
+                 (map :score)
+                 (reduce min))))))
 
 ;
 ; Integrity checks for the test MLQs. These repeat some of the tests above but

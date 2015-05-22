@@ -6,13 +6,14 @@
   [mlq]
   {:classname   "org.sqlite.JDBC"
    :subprotocol "sqlite"
-   :subname     mlq
-   })
+   :subname     mlq})
 
 (defn param
   "Fetch a parameter from an MLQ"
   [mlq param_name]
-  (:data (first (query (db mlq) ["SELECT Data FROM Param WHERE Id = ?" param_name]))))
+  (-> (query (db mlq) ["SELECT Data FROM Param WHERE Id = ?" param_name])
+      first
+      :data))
 
 (defn target-distance-scale
   "Find out the distance scaling factor for an MLQ"
