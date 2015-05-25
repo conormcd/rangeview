@@ -1,12 +1,13 @@
 (ns rangeview.mlq-test
   (:require [clojure.test :refer :all]
             [rangeview.mlq :refer :all]
-            [rangeview.mlshoot :as mlshoot]))
+            [rangeview.mlshoot :as mlshoot]
+            [rangeview.target :as target]))
 
 (def test-mlq-dir "test/data")
-(def test-mlq-files (map #(.getAbsolutePath %) (mlshoot/all-mlq-files test-mlq-dir)))
+(def test-mlq-files
+  (map #(.getAbsolutePath %) (mlshoot/all-mlq-files test-mlq-dir)))
 (def sample-mlq (first test-mlq-files))
-(def target-50m {:ring-size 8 :inner-ten 5})
 
 (deftest param-fetches-params
   (testing "Ensure that param fetches from the Param table"
@@ -24,27 +25,21 @@
   (testing "shot-scale scales the Y value of a shot"
     (is (= 8.0 (:y (shot-scale 2/1 {:x 4.0 :y 4.0}))))))
 
-(defn validate-shot-score-50m
-  [x y expected-score inner]
-  (let [score (shot-score target-50m {:x x :y y})]
+(defn validate-score
+  [discipline x y expected-score inner]
+  (let [score (shot-score discipline {:x x :y y})]
     (and
       (= (:score score) expected-score)
       (= (:inner score) inner))))
-(deftest validate-shot-scores-1
-  (testing "The score for 0.0 0.0 is 10.9*"
-    (is (validate-shot-score-50m 0.0 0.0 10.9 true))))
-(deftest validate-shot-scores-2
-  (testing "The score for 300.0 300.0 is 0.0"
-    (is (validate-shot-score-50m 300.0 300.0 0.0 false))))
-(deftest validate-shot-scores-3
-  (testing "The score for 14.85 7.15 is 8.9"
-    (is (validate-shot-score-50m 14.85 7.15 8.9 false))))
-(deftest validate-shot-scores-4
-  (testing "The score for 2.72 4.05 is 10.3*"
-    (is (validate-shot-score-50m 2.72 4.05 10.3 true))))
-(deftest validate-shot-scores-5
-  (testing "The score for -5.28 0.84 is 10.3"
-    (is (validate-shot-score-50m -5.28 0.84 10.3 false))))
+(deftest validate-scores
+  (doall
+    (for [test-data [[:fr60pr 0.0 0.0 10.9 true]
+                     [:fr60pr 300.0 300.0 0.0 false]
+                     [:fr60pr 14.85 7.15 8.9 false]
+                     [:fr60pr 2.72 4.05 10.3 true]
+                     [:fr60pr -5.28 0.84 10.3 false]]]
+      (testing (str "(validate-scores " test-data ")")
+        (is (apply validate-score test-data))))))
 
 (deftest shot-series-1-is-sighter
   (testing "Series 1 is a sighting series"
@@ -101,8 +96,10 @@
 
 (deftest mlq-files-have-ring-size
   (testing "All MLQ files have a valid, defined ring size"
-    (is (true-for-all-mlq-files #(> (:ring-size (target-params %)) 0)))))
+    (is (true-for-all-mlq-files
+          #(> (:ring-size (target/spec (discipline %))) 0)))))
 
 (deftest mlq-files-have-inner-ten
   (testing "All MLQ files have a valid, defined inner ten size"
-    (is (true-for-all-mlq-files #(> (:inner-ten (target-params %)) 0)))))
+    (is (true-for-all-mlq-files
+          #(> (:inner-ten (target/spec (discipline %))) 0)))))

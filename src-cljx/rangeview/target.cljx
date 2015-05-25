@@ -28,68 +28,80 @@
 ; 300m Standard Rifle Men      300STR3X20 :300str3x20
 
 (def target-dimensions
-  {:10m-air-pistol [[5 :white :black]
-                    [11.5 :white :black]
-                    [27.5 :white :black]
-                    [43.5 :white :black]
-                    [59.5 :black :black]
-                    [75.5 :black :white]
-                    [91.5 :black :white]
-                    [107.5 :black :white]
-                    [123.5 :black :white]
-                    [139.5 :black :white]
-                    [155.5 :black :white]]
-   :10m-air-rifle [[0.5 :white :white]
-                   [5.5 :white :black]
-                   [10.5 :white :black]
-                   [15.5 :white :black]
-                   [20.5 :white :black]
-                   [25.5 :white :black]
-                   [30.5 :black :black]
-                   [35.5 :black :white]
-                   [40.5 :black :white]
-                   [45.5 :black :white]]
-   :25m-precision-and-50m-pistol [[25 :white :black]
-                                  [50 :white :black]
-                                  [100 :white :black]
-                                  [150 :white :black]
-                                  [200 :black :black]
-                                  [250 :black :white]
-                                  [300 :black :white]
-                                  [350 :black :white]
-                                  [400 :black :white]
-                                  [450 :black :white]
-                                  [500 :black :white]]
-   :25m-rapid-fire-pistol [[50 :white :black]
-                           [100 :white :black]
-                           [180 :white :black]
-                           [260 :white :black]
-                           [340 :white :black]
-                           [420 :white :black]
-                           [500 :black :black]]
-   :50m-rifle [[5 :white :black]
-               [10.4 :white :black]
-               [26.4 :white :black]
-               [42.4 :white :black]
-               [58.4 :white :black]
-               [74.4 :white :black]
-               [90.4 :white :black]
-               [106.4 :white :black]
-               [112.4 :black :black]
-               [122.4 :black :white]
-               [138.4 :black :white]
-               [154.4 :black :white]]
-   :300m-rifle [[50 :white :black]
-                [100 :white :black]
-                [200 :white :black]
-                [300 :white :black]
-                [400 :white :black]
-                [500 :white :black]
-                [600 :black :black]
-                [700 :black :white]
-                [800 :black :white]
-                [900 :black :white]
-                [1000 :black :white]]})
+  {:10m-air-pistol {:ring-size 8
+                    :inner-ten 5
+                    :rings [[5 :white :black]
+                            [11.5 :white :black]
+                            [27.5 :white :black]
+                            [43.5 :white :black]
+                            [59.5 :black :black]
+                            [75.5 :black :white]
+                            [91.5 :black :white]
+                            [107.5 :black :white]
+                            [123.5 :black :white]
+                            [139.5 :black :white]
+                            [155.5 :black :white]]}
+   :10m-air-rifle {:ring-size 2.5
+                   :inner-ten 0.5
+                   :rings [[0.5 :white :white]
+                           [5.5 :white :black]
+                           [10.5 :white :black]
+                           [15.5 :white :black]
+                           [20.5 :white :black]
+                           [25.5 :white :black]
+                           [30.5 :black :black]
+                           [35.5 :black :white]
+                           [40.5 :black :white]
+                           [45.5 :black :white]]}
+   :25m-precision-and-50m-pistol {:ring-size nil ; TODO
+                                  :inner-ten 25
+                                  :rings [[25 :white :black]
+                                          [50 :white :black]
+                                          [100 :white :black]
+                                          [150 :white :black]
+                                          [200 :black :black]
+                                          [250 :black :white]
+                                          [300 :black :white]
+                                          [350 :black :white]
+                                          [400 :black :white]
+                                          [450 :black :white]
+                                          [500 :black :white]]}
+   :25m-rapid-fire-pistol {:ring-size nil ; TODO
+                           :inner-ten 50
+                           :rings [[50 :white :black]
+                                   [100 :white :black]
+                                   [180 :white :black]
+                                   [260 :white :black]
+                                   [340 :white :black]
+                                   [420 :white :black]
+                                   [500 :black :black]]}
+   :50m-rifle {:ring-size 8
+               :inner-ten 5
+               :rings [[5 :white :black]
+                       [10.4 :white :black]
+                       [26.4 :white :black]
+                       [42.4 :white :black]
+                       [58.4 :white :black]
+                       [74.4 :white :black]
+                       [90.4 :white :black]
+                       [106.4 :white :black]
+                       [112.4 :black :black]
+                       [122.4 :black :white]
+                       [138.4 :black :white]
+                       [154.4 :black :white]]}
+   :300m-rifle {:ring-size nil ; TODO
+                :inner-ten 50
+                :rings [[50 :white :black]
+                        [100 :white :black]
+                        [200 :white :black]
+                        [300 :white :black]
+                        [400 :white :black]
+                        [500 :white :black]
+                        [600 :black :black]
+                        [700 :black :white]
+                        [800 :black :white]
+                        [900 :black :white]
+                        [1000 :black :white]]}})
 
 (def disciplines
   {:ap60 {:calibre 4.5 :target :10m-air-pistol}
@@ -102,7 +114,7 @@
    :sp-rapid {:calibre 5.6 :target :25m-rapid-fire-pistol}
    :rfp {:calibre 5.6 :target :25m-rapid-fire-pistol}
    :stp {:calibre 5.6 :target :25m-precision-and-50m-pistol}
-   :fp {:calibre 5.6 :target :25m-pistol-precision}
+   :fp {:calibre 5.6 :target :25m-precision-and-50m-pistol}
    :fr3x40 {:calibre 5.6 :target :50m-rifle}
    :str3x20 {:calibre 5.6 :target :50m-rifle}
    :fr60pr {:calibre 5.6 :target :50m-rifle}
@@ -118,7 +130,20 @@
   [discipline]
   (-> disciplines discipline :calibre))
 
+(defn spec
+  "Get the dimensions of a target"
+  [discipline]
+  ((-> disciplines discipline :target) target-dimensions))
+
 (defn rings
   "Get the dimensions and colours for the rings for a target"
   [discipline]
-  ((-> disciplines discipline :target) target-dimensions))
+  (sort-by first < (:rings (spec discipline))))
+
+(defn score
+  [discipline x y]
+  (let [error (Math/sqrt (+ (* x x) (* y y)))
+        ring-size (:ring-size (spec discipline))
+        inner-ten (:inner-ten (spec discipline))]
+    {:score (max 0.0 (min 10.9 (- 11 (* 0.1 (Math/ceil (/ error (* ring-size 0.1)))))))
+     :inner (< error inner-ten)}))
