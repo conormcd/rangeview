@@ -53,6 +53,6 @@
       target-width (/ (.-innerWidth js/window) num-targets)]
   (doseq [source (map-indexed vector (target-addresses))]
     (let [id (first source)
-          url (str "http://" (second source) "/")]
+          url (str "http://" (second source) "/target-state")]
       (html/append-contents "targets" (html/target id target-width))
       (poll id url 5))))

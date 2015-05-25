@@ -11,9 +11,7 @@
                  [rm-hull/monet "0.2.1"]
                  [cljs-ajax "0.3.10"]]
   :plugins [[lein-cljsbuild "1.0.5"]]
-  :aliases {"repl" ["do" "cljx," "repl"]
-            "run" ["do" "cljx," ["cljsbuild" "once"] "run"]
-            "test" ["do" "cljx," "test"]}
+  :prep-tasks [["cljx" "once"] ["cljsbuild" "once"] "javac" "compile"]
   :cljx {:builds [{:source-paths ["src-cljx"]
                    :output-path "target/generated/clj"
                    :rules :clj}
@@ -28,4 +26,5 @@
   :main ^:skip-aot rangeview.core
   :target-path "target/%s"
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.6.0"]]}
-             :uberjar {:aot :all}})
+             :uberjar {:aot :all
+                       :resource-paths ["web/"]}})
