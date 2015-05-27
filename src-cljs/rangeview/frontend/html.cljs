@@ -1,4 +1,5 @@
-(ns rangeview.frontend.html)
+(ns rangeview.frontend.html
+  (:require [clojure.string :refer (join)]))
 
 (defn element
   "Get a DOM element by ID"
@@ -28,7 +29,7 @@
       "<div id=\"target" id "-name\" class=\"name\"></div>"
       "<canvas id=\"target" id "-canvas\" width=\"" width "\"></canvas>"
       "<table id=\"target" id "-infobox\" class=\"infobox\" width=\"" width "\">"
-      (clojure.string/join 
+      (join
         ""
         (for [shot (range 5)]
           (str
