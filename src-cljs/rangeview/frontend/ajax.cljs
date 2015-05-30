@@ -1,5 +1,6 @@
 (ns rangeview.frontend.ajax
-  (:require [ajax.core :refer [GET]]))
+  (:require [ajax.core :refer [GET]]
+            [rangeview.frontend.cron :as cron]))
 
 (defn log
   "Log an AJAX error"
@@ -19,4 +20,16 @@
   [url interval handler]
   (do
     (fetch url handler)
-    (js/setInterval (fn [] (fetch url handler)) (* interval 1000))))
+    (cron/start (str "poll-" url) interval #(fetch url handler))))
+
+(defn stop-polling
+  "Stop repeatedly fetching a URL"
+  [url]
+  (cron/stop (str "poll-" url)))
+
+(defn stop-all-polling
+  "Stop all the AJAX polling we're doing. Optionally restrict it to a pattern
+   by passing the string form of a regex for the URLs to match."
+  [& args]
+  (let [url-pattern-str (or (first args) ".*")]
+   (cron/stop-all (re-pattern (str "^poll-" url-pattern-str)))))
