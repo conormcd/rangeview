@@ -3,6 +3,7 @@
   :url "http://github.com/conormcd/rangeview"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/clojurescript "0.0-3126"]
+                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/java.jdbc "0.3.6"]
                  [org.xerial/sqlite-jdbc "3.8.7"]
@@ -27,4 +28,5 @@
   :target-path "target/%s"
   :profiles {:dev {:plugins [[com.keminglabs/cljx "0.6.0"]]}
              :uberjar {:aot :all
-                       :resource-paths ["web/"]}})
+                       :resource-paths ["web/"]}}
+  :jvm-opts ["-Djava.net.preferIPv4Stack=true"])

@@ -8,4 +8,6 @@
   [dir]
   (let [all-files (all-mlq-files dir)
         all-times (map #(.lastModified %) all-files)]
-    (.getAbsolutePath (key (apply max-key val (zipmap all-files all-times))))))
+    (if (not (empty? all-files))
+      (.getAbsolutePath (key (apply max-key val (zipmap all-files all-times))))
+      nil)))
