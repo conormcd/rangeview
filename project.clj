@@ -6,6 +6,7 @@
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]
                  [org.clojure/data.json "0.2.6"]
                  [org.clojure/java.jdbc "0.3.6"]
+                 [org.clojure/tools.nrepl "0.2.10"]
                  [org.xerial/sqlite-jdbc "3.8.7"]
                  [ring/ring-core "1.3.2"]
                  [ring/ring-jetty-adapter "1.3.2"]

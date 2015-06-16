@@ -1,6 +1,7 @@
 (ns rangeview.core
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
+            [clojure.tools.nrepl.server :as nrepl]
             [rangeview.discovery :as discovery]
             [rangeview.mlq :as mlq]
             [rangeview.mlshoot :as mlshoot]
@@ -38,12 +39,19 @@
     "/targets" (json-response (peers/all heartbeat-timeout))
     (json-response {:error (str "No such path " (:uri req))} :status 404)))
 
+(defn enable-repl
+  [port]
+  (nrepl/start-server :port port))
+
 (defn -main
   [& args]
   (let [mlq-dir (first args)
         port (or (some-> args second Integer/parseInt) 8080)
+        repl-port (some-> (System/getenv "NREPL_PORT") Integer/parseInt)
         heartbeat-frequency 5
         heartbeat-timeout 30]
+    (when repl-port
+      (enable-repl repl-port))
     (when (some? mlq-dir)
       (discovery/advertise port heartbeat-frequency))
     (discovery/listen heartbeat-frequency)
