@@ -62,7 +62,6 @@
                      :validate [#(< 0 %) "Must be a positive number of seconds."]]
                     [nil "--help" "Show how to run this program."]
                     [nil "--nrepl-port PORT" "Run a nREPL on this port."
-                     :default (some-> (System/getenv "NREPL_PORT") Integer/parseInt)
                      :parse-fn #(Integer/parseInt %)
                      :validate [#(< 0 % 65536) "Must be a valid port number"]]]))
 
