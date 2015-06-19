@@ -20,22 +20,32 @@
 (defn advertise
   "Advertise this host as listening on a specific port."
   [port interval]
-  (let [sock (socket adv-address adv-port)
-        pack (packet adv-address adv-port (pr-str {:port port}))]
-    (async/go
-      (while true
-        (.send sock pack)
-        (Thread/sleep (* interval 1000))))))
+  (async/go
+    (while true
+      (try
+        (let [sock (socket adv-address adv-port)
+              pack (packet adv-address adv-port (pr-str {:port port}))]
+          (while true
+            (try
+              (.send sock pack)
+              (catch java.io.IOException e))
+            (Thread/sleep (* interval 1000))))
+        (catch java.io.IOException e))
+      (Thread/sleep 1000))))
 
 (defn listen
   "Listen for advertisements from other instances of rangeview."
   [interval]
-  (let [sock (socket adv-address adv-port)
-        packet (DatagramPacket. (byte-array 1024) 1024)]
-    (async/go
-      (while true
-        (.receive sock packet)
-        (let [source (-> packet .getAddress .getHostAddress)
-              payload (-> packet .getData (String.) read-string)]
-          (peers/add {:host source :port (:port payload)}))
-        (Thread/sleep (* interval 1000))))))
+  (async/go
+    (while true
+      (let [sock (socket adv-address adv-port)
+            packet (DatagramPacket. (byte-array 1024) 1024)]
+        (while true
+          (try
+            (.receive sock packet)
+            (let [source (-> packet .getAddress .getHostAddress)
+                  payload (-> packet .getData (String.) read-string)]
+              (peers/add {:host source :port (:port payload)}))
+            (catch java.io.IOException e))
+            (Thread/sleep (* interval 1000))))
+      (Thread/sleep 1000))))
