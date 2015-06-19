@@ -1,6 +1,7 @@
 (ns rangeview.core
   (:require [clojure.data.json :as json]
             [clojure.java.io :as io]
+            [clojure.tools.cli :refer (parse-opts)]
             [clojure.tools.nrepl.server :as nrepl]
             [rangeview.discovery :as discovery]
             [rangeview.mlq :as mlq]
@@ -43,16 +44,52 @@
   [port]
   (nrepl/start-server :port port))
 
+(defn parse-args
+  [args]
+  (parse-opts args [["-d" "--directory DIR" "The directory containing the MLQ files."
+                     :validate [#(.exists (io/as-file %)) "Directory must exist."]]
+                    ["-p" "--port PORT" "HTTP API port."
+                     :default 8080
+                     :parse-fn #(Integer/parseInt %)
+                     :validate [#(< 0 % 65536) "Must be a valid port number"]]
+                    [nil "--heartbeat-frequency SECONDS" "Seconds between advertising to other rangeview instances"
+                     :default 5
+                     :parse-fn #(Integer/parseInt %)
+                     :validate [#(< 0 %) "Must be a positive number of seconds."]]
+                    [nil "--heartbeat-timeout SECONDS" "The longest a peer can go without heartbeating before being considered gone away."
+                     :default 30
+                     :parse-fn #(Integer/parseInt %)
+                     :validate [#(< 0 %) "Must be a positive number of seconds."]]
+                    [nil "--help" "Show how to run this program."]
+                    [nil "--nrepl-port PORT" "Run a nREPL on this port."
+                     :default (some-> (System/getenv "NREPL_PORT") Integer/parseInt)
+                     :parse-fn #(Integer/parseInt %)
+                     :validate [#(< 0 % 65536) "Must be a valid port number"]]]))
+
+(defn print-usage-message [opts]
+  (println "Usage: rangeview [options]\n")
+  (println (-> opts :summary)))
+
 (defn -main
   [& args]
-  (let [mlq-dir (first args)
-        port (or (some-> args second Integer/parseInt) 8080)
-        repl-port (some-> (System/getenv "NREPL_PORT") Integer/parseInt)
-        heartbeat-frequency 5
-        heartbeat-timeout 30]
+  (let [opts (parse-args args)
+        heartbeat-frequency (-> opts :options :heartbeat-frequency)
+        heartbeat-timeout (-> opts :options :heartbeat-timeout)
+        mlq-dir (-> opts :options :directory)
+        port (-> opts :options :port)
+        repl-port (-> opts :options :nrepl-port)]
+    (when (-> opts :options :help)
+      (print-usage-message opts)
+      (System/exit 0))
+    (when (-> opts :errors)
+      (doseq [error (-> opts :errors)]
+        (println error))
+      (println "")
+      (print-usage-message opts)
+      (System/exit 1))
     (when repl-port
       (enable-repl repl-port))
-    (when (some? mlq-dir)
+    (when mlq-dir
       (discovery/advertise port heartbeat-frequency))
     (discovery/listen heartbeat-frequency)
     (jetty/run-jetty (partial handler mlq-dir heartbeat-timeout) {:port port})))
