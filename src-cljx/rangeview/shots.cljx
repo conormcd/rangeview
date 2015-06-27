@@ -6,7 +6,7 @@
   (let [sighter? (:sighter (last shots))
         series-shots (filter #(= (:sighter %) sighter?) shots)
         n (mod (count series-shots) 10)]
-    (take-last (if (> n 0) n 10) series-shots)))
+    (or (take-last (if (> n 0) n 10) series-shots) [])))
 
 (defn match-shots
   "Extract the match or record shots from a series of shots."
@@ -21,7 +21,7 @@
 (defn round-decimal
   "Round a decimal value to one decimal place."
   [value]
-  #+clj (format "%.1f" value)
+  #+clj (format "%.1f" (double value))
   #+cljs (.toFixed value 1))
 
 (defn score
