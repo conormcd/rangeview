@@ -55,7 +55,6 @@
 (ajax/poll (peers-url)
            (peers-refresh-interval)
            (fn [ajax-payload]
-             (if (not= (keys ajax-payload) (keys @current-targets))
-               (do
-                 (reset! current-targets ajax-payload)
-                 (reset-targets @current-targets)))))
+             (when (not= (keys ajax-payload) (keys @current-targets))
+               (reset! current-targets ajax-payload)
+               (reset-targets @current-targets))))

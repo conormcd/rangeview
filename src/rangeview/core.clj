@@ -20,7 +20,7 @@
 (defn static-file
   [path content-type]
   (let [file (io/file path)]
-    (if (.exists file)
+    (when (.exists file)
       {:status 200
        :headers {"Access-Control-Allow-Origin" "*"
                  "Content-Type" content-type}

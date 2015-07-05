@@ -73,7 +73,7 @@
   [target-canvas scale shots calibre]
   (if (> (count shots) 0)
     (do
-      (if (:sighter (last shots))
+      (when (:sighter (last shots))
         (sighter-triangle target-canvas))
       (doseq [s (butlast shots)]
         (shot target-canvas scale s calibre :green))
