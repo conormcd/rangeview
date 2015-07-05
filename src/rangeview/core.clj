@@ -42,7 +42,7 @@
 
 (defn enable-repl
   [port]
-  (nrepl/start-server :port port))
+  (nrepl/start-server :bind nil :port port))
 
 (defn parse-args
   [args]
