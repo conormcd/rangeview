@@ -20,12 +20,12 @@
 (defn static-file
   [path content-type]
   (let [file (io/file path)]
-    (when (.exists file)
+    (if (.exists file)
       {:status 200
        :headers {"Access-Control-Allow-Origin" "*"
                  "Content-Type" content-type}
        :body (slurp file)}
-      (json-response {"No such file " file} :status 404))))
+      (json-response {"No such file " (str file)} :status 404))))
 
 (defn handler
   [mlq-dir heartbeat-timeout req]
