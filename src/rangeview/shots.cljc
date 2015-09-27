@@ -21,8 +21,8 @@
 (defn round-decimal
   "Round a decimal value to one decimal place."
   [value]
-  #+clj (format "%.1f" (double value))
-  #+cljs (.toFixed value 1))
+  #? (:clj  (format "%.1f" (double value))
+      :cljs (.toFixed value 1)))
 
 (defn score
   "Take a series of shots and score them in both decimal and integer"
