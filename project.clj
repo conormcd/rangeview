@@ -1,4 +1,4 @@
-(defproject rangeview "0.0.1"
+(defproject rangeview "0.1.0"
   :description "A daemon to expose the data from a target controlled by MLShoot."
   :url "http://github.com/conormcd/rangeview"
   :dependencies [[org.clojure/clojure "1.7.0"]
